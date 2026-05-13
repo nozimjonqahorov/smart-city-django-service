@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem 0;">
+    <div class="card animate-fade" style="max-width: 500px; width: 100%; box-shadow: var(--shadow-lg);">
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">Ro'yxatdan o'tish</h1>
+            <p style="color: var(--secondary);">Smart City hamjamiyatiga qo'shiling</p>
+        </div>
+        
+        <form method="post" id="register-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                <div id="div_{{ field.name }}">
+                    <label style="display: flex; justify-content: space-between;">
+                        {{ field.label }}
+                        {% if field.field.required %}<span style="color: var(--danger); font-size: 0.7rem;">(Majburiy)</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color: #64748b; font-size: 0.75rem;">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn" style="width: 100%; padding: 0.875rem; margin-top: 2rem; font-size: 1rem; border-radius: 0.75rem;">Hisob yaratish</button>
+        </form>
+        
+        <div style="margin-top: 2rem; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
+            <p style="color: var(--secondary);">Profilingiz bormi? <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Kirish</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const roleSelect = document.querySelector('select[name="role"]');
+    const categoryDiv = document.querySelector('#div_category');
+    
+    function toggleCategory() {
+        if (roleSelect && roleSelect.value === 'TECHNICIAN') {
+            categoryDiv.style.display = 'block';
+        } else if (categoryDiv) {
+            categoryDiv.style.display = 'none';
+        }
+    }
+    
+    if (roleSelect) {
+        roleSelect.addEventListener('change', toggleCategory);
+        toggleCategory();
+    }
+</script>
+{% endblock %}

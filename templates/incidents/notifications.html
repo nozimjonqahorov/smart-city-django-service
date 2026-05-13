@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Barcha xabarlar</h1>
+        <a href="{% url 'mark_notifications_read' %}" class="btn">Hammasini o'qilgan deb belgilash</a>
+    </div>
+
+    {% for notif in notifications %}
+        <div style="padding: 1.5rem; border-bottom: 1px solid #eee; {% if not notif.is_read %}background-color: #f0f7ff; border-left: 4px solid #3498db;{% endif %}">
+            <p style="margin: 0; font-size: 1.1rem;">{{ notif.message }}</p>
+            <small style="color: #666;">{{ notif.created_at }} ({{ notif.created_at|timesince }} oldin)</small>
+        </div>
+    {% empty %}
+        <p style="text-align: center; color: #999; padding: 2rem;">Xabarlar mavjud emas.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; align-items: flex-start;">
+    
+    <div class="animate-fade">
+        <div class="card" style="padding: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                <div>
+                    <span class="status-badge status-{{ incident.status|lower }}" style="margin-bottom: 1rem; display: inline-block;">{{ incident.get_status_display }}</span>
+                    <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0; letter-spacing: -0.02em;">{{ incident.title }}</h1>
+                    <p style="color: var(--secondary); margin-top: 0.5rem; font-size: 1.1rem;">{{ incident.category.name }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 700; color: {% if incident.priority == 'HIGH' %}var(--danger){% elif incident.priority == 'MEDIUM' %}var(--warning){% else %}var(--success){% endif %}; font-size: 1.1rem;">
+                        {{ incident.get_priority_display }} darajali
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--secondary); margin-top: 0.25rem;">ID: #{{ incident.id }}</div>
+                </div>
+            </div>
+
+            <div style="display: grid; gap: 2rem;">
+                <!-- Main Image and Gallery -->
+                <div>
+                    {% if incident.photo %}
+                        <img src="{{ incident.photo.url }}" style="width: 100%; max-height: 500px; object-fit: contain; background: #000; border-radius: 1rem; box-shadow: var(--shadow-lg);" alt="Main Image">
+                    {% endif %}
+                    
+                    {% if incident.images.all %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                        {% for img in incident.images.all %}
+                            <a href="{{ img.image.url }}" target="_blank">
+                                <img src="{{ img.image.url }}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 0.75rem; border: 2px solid white; box-shadow: var(--shadow);" alt="Extra Image">
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 2rem;">
+                    <h3 style="font-weight: 800; margin-bottom: 1rem;">Muammo tavsifi</h3>
+                    <p style="color: var(--secondary); white-space: pre-wrap; font-size: 1.1rem; line-height: 1.7;">{{ incident.description }}</p>
+                </div>
+
+                <div style="display: flex; gap: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 1rem;">
+                    <div>
+                        <label>Manzil</label>
+                        <p style="margin: 0; font-weight: 600;">📍 {{ incident.address }}</p>
+                    </div>
+                    <div>
+                        <label>Sana</label>
+                        <p style="margin: 0; font-weight: 600;">📅 {{ incident.created_at|date:"d-M, Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <!-- Moved Logs here for more space -->
+                <div style="margin-top: 2rem; border-top: 1px solid #f1f5f9; padding-top: 2rem;">
+                    <h3 style="font-weight: 800; margin-bottom: 1.5rem;">Tarix (Loglar)</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        {% for log in incident.logs.all|dictsortreversed:"created_at" %}
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <div style="min-width: 120px; text-align: right; color: var(--secondary); font-size: 0.8rem; font-weight: 500;">
+                                {{ log.created_at|date:"d-M, H:i" }}
+                            </div>
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--primary); margin-top: 5px; flex-shrink: 0; box-shadow: 0 0 0 4px #eef2ff;"></div>
+                            <div style="flex: 1; background: white; padding: 1rem; border-radius: 0.75rem; border: 1px solid #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                <div style="font-weight: 700; color: var(--dark);">{{ log.action }}</div>
+                                <div style="color: var(--secondary); font-size: 0.8rem; margin-top: 0.25rem;">Ijrochi: {{ log.user.username }} ({{ log.user.get_role_display }})</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if incident.result_photo or incident.result_comment %}
+        <div class="card animate-fade" style="margin-top: 2rem; border-left: 6px solid var(--success); background: #f0fdf4;">
+            <h3 style="font-weight: 800; color: #065f46; margin-top: 0;">🛠️ Bajarilgan ish natijasi</h3>
+            {% if incident.result_photo %}
+                <img src="{{ incident.result_photo.url }}" style="width: 100%; border-radius: 1rem; margin-bottom: 1.5rem; box-shadow: var(--shadow);" alt="Result Proof">
+            {% endif %}
+            <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid #dcfce7;">
+                <p style="margin: 0; color: #166534; font-size: 1.1rem; line-height: 1.6;">{{ incident.result_comment }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Feedback History -->
+        {% if incident.feedbacks.all %}
+        <div style="margin-top: 3rem;">
+            <h3 style="font-weight: 800; margin-bottom: 1.5rem;">Foydalanuvchi fikrlari ({{ incident.feedbacks.count }})</h3>
+            {% for f in incident.feedbacks.all|dictsortreversed:"id" %}
+                <div class="card" style="margin-bottom: 1rem; border-left: 4px solid {% if f.rating > 2 %}var(--success){% else %}var(--danger){% endif %}; padding: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <div style="font-size: 1.25rem; font-weight: 800; color: #f59e0b;">
+                            {% for i in "12345"|make_list %}{% if forloop.counter <= f.rating %}★{% else %}☆{% endif %}{% endfor %}
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--secondary);">{{ f.id }}# Feedback</div>
+                    </div>
+                    <p style="margin: 0; color: var(--secondary);">{{ f.comment }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Management Sidebar -->
+    <div style="position: sticky; top: 6rem;">
+        <div class="card" style="background: var(--dark); color: white;">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-weight: 800; color: #818cf8;">Boshqaruv</h3>
+            
+            {% if user.role == 'OPERATOR' %}
+                {% if incident.status == 'NEW' or incident.status == 'REOPENED' %}
+                <form action="{% url 'update_status' incident.pk %}" method="post">
+                    {% csrf_token %}
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #94a3b8;">Harakat turi</label>
+                        <select name="action" style="background: #1e293b; color: white; border-color: #334155;">
+                            <option value="ASSIGN">Texnikka biriktirish</option>
+                            <option value="REJECT">Rad etish</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #94a3b8;">Texnikni tanlang</label>
+                        <select name="technician" style="background: #1e293b; color: white; border-color: #334155;">
+                            <option value="">-- Tanlang --</option>
+                            {% for tech in technicians %}
+                                {% if tech.category == incident.category %}
+                                <option value="{{ tech.id }}">{{ tech.username }} ({% if tech.is_busy %}Band{% else %}Bo'sh{% endif %})</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; padding: 0.8rem;">Tasdiqlash</button>
+                </form>
+                {% else %}
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Hozirda bu ariza bilan amallar bajarib bo'lmaydi.</p>
+                {% endif %}
+            {% elif user.role == 'TECHNICIAN' and incident.technician == user %}
+                {% if incident.status == 'IN_PROGRESS' or incident.status == 'REOPENED' %}
+                <form action="{% url 'update_status' incident.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="RESOLVE">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #94a3b8;">Bajarilgan ish rasmi</label>
+                        <input type="file" name="result_photo" required style="background: #1e293b; color: white; border-color: #334155;">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #94a3b8;">Hisobot</label>
+                        <textarea name="result_comment" rows="4" style="background: #1e293b; color: white; border-color: #334155;" placeholder="Nimalar qilindi?"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success" style="width: 100%; padding: 0.8rem;">Hisobotni yuborish</button>
+                </form>
+                {% else %}
+                    <p style="color: #10b981;">Vazifa yakunlangan. Rahmat!</p>
+                {% endif %}
+            {% elif user.role == 'CITIZEN' and incident.citizen == user and incident.status == 'RESOLVED' %}
+                <form action="{% url 'update_status' incident.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="CLOSE">
+                    <div style="background: #1e293b; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #94a3b8; border-left: 3px solid var(--warning);">
+                        <strong>Bajarildi vs Yopildi:</strong> Texnik ishni tugatdi (Bajarildi). Agar natija ma'qul bo'lsa, baho bering va arizani yakuniy yoping (Yopildi).
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #94a3b8;">Baho (1-5)</label>
+                        <input type="number" name="rating" min="1" max="5" value="5" style="background: #1e293b; color: white; border-color: #334155;">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="color: #94a3b8;">Fikringiz</label>
+                        <textarea name="comment" rows="3" style="background: #1e293b; color: white; border-color: #334155;"></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Baholash</button>
+                </form>
+            {% else %}
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
+                    <p style="color: #94a3b8;">Tizim tomonidan nazorat qilinmoqda.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

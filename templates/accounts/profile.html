@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 900px; margin: auto;">
+    <div class="card" style="padding: 0; overflow: hidden; border: none; margin-bottom: 2rem;">
+        <!-- Header Profile Banner -->
+        <div style="height: 150px; background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%);"></div>
+        
+        <div style="padding: 0 2.5rem 2.5rem; margin-top: -50px; position: relative; display: flex; align-items: flex-end; gap: 2rem; flex-wrap: wrap;">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" style="width: 150px; height: 150px; border-radius: 1.5rem; object-fit: cover; border: 5px solid white; box-shadow: var(--shadow-lg);">
+            {% else %}
+                <div style="width: 150px; height: 150px; border-radius: 1.5rem; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; font-weight: 800; border: 5px solid white; box-shadow: var(--shadow-lg);">{{ user.username|first|upper }}</div>
+            {% endif %}
+            
+            <div style="flex: 1; margin-bottom: 0.5rem;">
+                <h1 style="font-size: 2rem; font-weight: 800; margin: 0;">{{ user.get_full_name|default:user.username }}</h1>
+                <p style="color: var(--secondary); margin: 0.25rem 0 0; font-weight: 500;">
+                    <span class="status-badge" style="background: #e2e8f0; color: #475569;">{{ user.get_role_display }}</span>
+                    {% if user.role == 'TECHNICIAN' %}
+                        <span style="margin-left: 1rem;">🎯 {{ user.category.name }}</span>
+                    {% endif %}
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 0.5rem;">
+                <a href="{% url 'password_change' %}" class="btn btn-outline" style="font-size: 0.85rem;">Parolni o'zgartirish</a>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <!-- Edit Profile -->
+        <div class="card">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-weight: 800;">Ma'lumotlarni tahrirlash</h3>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in u_form %}
+                    {% if field.widget_type != 'hidden' %}
+                        <div>
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small style="color: #64748b;">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                {% endfor %}
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Saqlash</button>
+            </form>
+        </div>
+
+        <!-- Role Specific Section -->
+        <div class="card">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-weight: 800;">Faoliyat statistikasi</h3>
+            
+            {% if user.role == 'CITIZEN' %}
+                <div style="display: grid; gap: 1rem;">
+                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--secondary);">Yuborilgan arizalar</div>
+                        <div style="font-size: 1.5rem; font-weight: 800;">{{ user.reported_incidents.count }}</div>
+                    </div>
+                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--secondary);">Hal etilgan muammolar</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--success);">{{ user.reported_incidents.filter.status.CLOSED.count|default:0 }}</div>
+                    </div>
+                </div>
+            {% elif user.role == 'TECHNICIAN' %}
+                <div style="display: grid; gap: 1rem;">
+                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--secondary);">Biriktirilgan vazifalar</div>
+                        <div style="font-size: 1.5rem; font-weight: 800;">{{ user.assigned_tasks.count }}</div>
+                    </div>
+                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--secondary);">Muvaffaqiyatli yakunlangan</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--success);">{{ user.assigned_tasks.filter.status.CLOSED.count|default:0 }}</div>
+                    </div>
+                </div>
+            {% elif user.role == 'OPERATOR' %}
+                <p>Operator sifatida siz shahrimiz xavfsizligi va qulayligini ta'minlashda muhim o'rin tutasiz.</p>
+                <ul style="padding-left: 1.2rem; color: var(--secondary); font-size: 0.9rem;">
+                    <li>Arizalarni saralash</li>
+                    <li>Texniklarni boshqarish</li>
+                    <li>Sifat nazorati</li>
+                </ul>
+            {% endif %}
+            
+            <div style="margin-top: 2rem; border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
+                <p style="font-size: 0.85rem; color: var(--secondary);">Ro'yxatdan o'tilgan sana: <br><strong>{{ user.date_joined|date:"d-F, Y" }}</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

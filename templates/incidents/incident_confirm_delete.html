@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: auto; text-align: center;">
+    <h1>Muammoni o'chirishni tasdiqlaysizmi?</h1>
+    <p>"<strong>{{ object.title }}</strong>" o'chirilishiga aminmisiz? Bu amalni ortga qaytarib bo'lmaydi.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn" style="background-color: #e74c3c;">Ha, o'chirilsin</button>
+        <a href="{% url 'dashboard' %}" class="btn">Bekor qilish</a>
+    </form>
+</div>
+{% endblock %}

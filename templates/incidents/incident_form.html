@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: auto;">
+    <h1>Muammo haqida ma'lumot</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <div style="margin-bottom: 1rem;">
+            <label>Qo'shimcha rasmlar (bir nechta tanlash mumkin):</label>
+            <input type="file" name="images" multiple>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%;">Yuborish</button>
+    </form>
+</div>
+{% endblock %}
