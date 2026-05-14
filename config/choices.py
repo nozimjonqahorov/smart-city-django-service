@@ -1,0 +1,16 @@
+REGION_CHOICES = (
+    ("andijon", "Andijon viloyati"),
+    ("buxoro", "Buxoro viloyati"),
+    ("fargona", "Farg'ona viloyati"),
+    ("jizzax", "Jizzax viloyati"),
+    ("namangan", "Namangan viloyati"),
+    ("navoiy", "Navoiy viloyati"),
+    ("qashqadaryo", "Qashqadaryo viloyati"),
+    ("qoraqalpogiston", "Qoraqalpog'iston Respublikasi"),
+    ("samarqand", "Samarqand viloyati"),
+    ("sirdaryo", "Sirdaryo viloyati"),
+    ("surxondaryo", "Surxondaryo viloyati"),
+    ("toshkent_shahar", "Toshkent shahri"),
+    ("toshkent_viloyati", "Toshkent viloyati"),
+    ("xorazm", "Xorazm viloyati"),
+)

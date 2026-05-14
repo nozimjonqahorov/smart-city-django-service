@@ -23,6 +23,8 @@ class DashboardView(LoginRequiredMixin, View):
         
         if user.role == 'CITIZEN':
             queryset = queryset.filter(citizen=user)
+        elif user.role == 'OPERATOR' and user.region:
+            queryset = queryset.filter(region=user.region)
         elif user.role == 'TECHNICIAN':
             queryset = queryset.filter(technician=user)
         
@@ -72,6 +74,8 @@ class IncidentCreateView(LoginRequiredMixin, View):
         if form.is_valid():
             incident = form.save(commit=False)
             incident.citizen = request.user
+            incident.region = request.user.region
+            incident.city = request.user.city
             incident.save()
             
            
@@ -81,6 +85,8 @@ class IncidentCreateView(LoginRequiredMixin, View):
                 
        
             operators = User.objects.filter(role='OPERATOR')
+            if incident.region:
+                operators = operators.filter(region=incident.region)
             for op in operators:
                 Notification.objects.create(user=op, message=f"Yangi muammo yaratildi: {incident.title}")
                 

@@ -17,8 +17,14 @@
                 <h1 style="font-size: 2rem; font-weight: 800; margin: 0;">{{ user.get_full_name|default:user.username }}</h1>
                 <p style="color: var(--secondary); margin: 0.25rem 0 0; font-weight: 500;">
                     <span class="status-badge" style="background: #e2e8f0; color: #475569;">{{ user.get_role_display }}</span>
+                    {% if user.region %}
+                        <span style="margin-left: 1rem;">{{ user.get_region_display }}</span>
+                    {% endif %}
+                    {% if user.city %}
+                        <span style="margin-left: 1rem;">{{ user.city }}</span>
+                    {% endif %}
                     {% if user.role == 'TECHNICIAN' %}
-                        <span style="margin-left: 1rem;">🎯 {{ user.category.name }}</span>
+                        <span style="margin-left: 1rem;">{{ user.category.name }}</span>
                     {% endif %}
                 </p>
             </div>

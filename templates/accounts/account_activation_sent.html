@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 2rem 0;">
+    <div class="card animate-fade" style="max-width: 520px; width: 100%; text-align: center; box-shadow: var(--shadow-lg);">
+        <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem;">Emailni tasdiqlang</h1>
+        <p style="color: var(--secondary); line-height: 1.7;">
+            Tasdiqlash havolasi <strong>{{ email }}</strong> manziliga yuborildi.
+            Local ishga tushirishda havola terminal oynasida ko'rinadi.
+        </p>
+        <a href="{% url 'login' %}" class="btn btn-outline" style="margin-top: 1.5rem; text-decoration: none;">Kirish sahifasiga qaytish</a>
+    </div>
+</div>
+{% endblock %}

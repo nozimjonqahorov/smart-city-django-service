@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from config.choices import REGION_CHOICES
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -35,6 +36,8 @@ class Incident(models.Model):
     description = models.TextField()
     photo = models.ImageField(upload_to='incidents/')
     address = models.CharField(max_length=255)
+    region = models.CharField(max_length=50, choices=REGION_CHOICES, blank=True)
+    city = models.CharField(max_length=100, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -43,18 +46,13 @@ class Incident(models.Model):
     result_comment = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            if "Electricity" in self.category.name or "Water" in self.category.name:
-                self.priority = 'HIGH'
-            elif "Road" in self.category.name:
-                self.priority = 'MEDIUM'
-            else:
-                self.priority = 'LOW'
         super().save(*args, **kwargs)
 
     class Meta:
         indexes = [
             models.Index(fields=['status', 'category']),
+            models.Index(fields=['region']),
+            models.Index(fields=['city']),
         ]
 
     def __str__(self):
