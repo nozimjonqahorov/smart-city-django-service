@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 2rem 0;">
-    <div class="card animate-fade" style="max-width: 520px; width: 100%; text-align: center; box-shadow: var(--shadow-lg);">
-        <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem;">Havola yaroqsiz</h1>
-        <p style="color: var(--secondary); line-height: 1.7;">
-            Tasdiqlash havolasi eskirgan yoki noto'g'ri. Iltimos, qaytadan ro'yxatdan o'ting.
-        </p>
-        <a href="{% url 'register' %}" class="btn" style="margin-top: 1.5rem; text-decoration: none;">Ro'yxatdan o'tish</a>
+<section class="auth-shell">
+    <div class="card auth-card">
+        <div class="auth-head">
+            <div class="auth-icon" style="color: var(--danger); background: linear-gradient(135deg, rgba(220, 38, 38, 0.12), rgba(245, 158, 11, 0.12));">ER</div>
+            <span class="eyebrow" style="background: rgba(220, 38, 38, 0.08); color: var(--danger);">Tasdiqlash xatosi</span>
+            <h1 class="section-title" style="margin-top: 1rem;">Havola yaroqsiz</h1>
+            <p class="section-copy" style="margin-left: auto; margin-right: auto;">
+                Tasdiqlash havolasi eskirgan yoki noto'g'ri. Qayta ro'yxatdan o'tib yangi tasdiqlash havolasini oling.
+            </p>
+        </div>
+
+        <a href="{% url 'register' %}" class="btn" style="width: 100%;">Ro'yxatdan o'tish</a>
     </div>
-</div>
+</section>
 {% endblock %}

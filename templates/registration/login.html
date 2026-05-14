@@ -1,31 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 2rem 0;">
-    <div class="card animate-fade" style="max-width: 450px; width: 100%; box-shadow: var(--shadow-lg);">
-        <div style="text-align: center; margin-bottom: 2.5rem;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🔓</div>
-            <h2 style="font-size: 2rem; font-weight: 800; margin: 0;">Tizimga kirish</h2>
-            <p style="color: var(--secondary); margin-top: 0.5rem;">Smart City boshqaruviga qayting</p>
+<section class="auth-shell">
+    <div class="card auth-card">
+        <div class="auth-head">
+            <div class="auth-icon">IN</div>
+            <span class="eyebrow">Tizimga kirish</span>
+            <h1 class="section-title" style="margin-top: 1rem;">Smart City boshqaruviga qayting</h1>
+            <p class="section-copy" style="margin-left: auto; margin-right: auto;">Profilingiz orqali arizalar, vazifalar va xizmat holatini davom ettiring.</p>
         </div>
-        
-        <form method="post">
+
+        <form method="post" class="form-stack">
             {% csrf_token %}
             {% for field in form %}
                 <div>
-                    <label>{{ field.label }}</label>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
                     {% for error in field.errors %}
-                        <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ error }}</p>
+                        <p class="field-error">{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endfor %}
-            <button type="submit" class="btn" style="width: 100%; padding: 0.875rem; margin-top: 1.5rem; font-size: 1rem;">Kirish</button>
+            <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Kirish</button>
         </form>
-        
-        <div style="margin-top: 2rem; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-            <p style="color: var(--secondary);">Profilingiz yo'qmi? <a href="{% url 'register' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Ro'yxatdan o'ting</a></p>
+
+        <div style="margin-top: 1.75rem; padding-top: 1.4rem; border-top: 1px solid rgba(148, 163, 184, 0.18); text-align: center;">
+            <p style="margin: 0; color: var(--secondary);">Profilingiz yo'qmi? <a href="{% url 'register' %}" style="color: var(--primary); font-weight: 800; text-decoration: none;">Ro'yxatdan o'ting</a></p>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

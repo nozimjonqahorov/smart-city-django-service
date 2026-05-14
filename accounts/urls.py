@@ -9,4 +9,7 @@ urlpatterns = [
     path('activate/<uidb64>/<token>/', views.activate_account, name='activate_account'),
     path('profile/', views.profile, name='profile'),
     path('password-change/', views.MyPasswordChangeView.as_view(), name='password_change'),
+
+    path('api/viloyatlar/', views.get_viloyatlar, name='api_viloyatlar'),
+    path('api/tumanlar/<int:viloyat_id>/', views.get_tumanlar, name='api_tumanlar'),
 ]

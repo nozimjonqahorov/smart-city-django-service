@@ -1,0 +1,143 @@
+<!--
+Frontend Integration Guide for Region (Viloyat) and District (Tuman) Selection
+
+This example shows how to integrate the API endpoints with JavaScript.
+Add this code to your registration form template.
+-->
+
+<div class="form-group mb-3">
+    <label for="viloyat" class="form-label">Viloyat (Region) *</label>
+    <select class="form-select" id="viloyat" name="viloyat" required>
+        <option value="">-- Viloyat tanlang --</option>
+    </select>
+    <small class="text-muted">Ro'yxatdan o'tish uchun viloyatni tanlang</small>
+</div>
+
+<div class="form-group mb-3">
+    <label for="tuman" class="form-label">Tuman (District) *</label>
+    <select class="form-select" id="tuman" name="tuman" required>
+        <option value="">-- Avval viloyat tanlang --</option>
+    </select>
+    <small class="text-muted">Ro'yxatdan o'tish uchun tumanni tanlang</small>
+</div>
+
+<script>
+    // Load Viloyatlar on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadViloyatlar();
+        
+        // Listen for Viloyat selection change
+        document.getElementById('viloyat').addEventListener('change', function() {
+            const viloyatId = this.value;
+            if (viloyatId) {
+                loadTumanlar(viloyatId);
+            } else {
+                // Reset Tuman select if no Viloyat is selected
+                const tumanSelect = document.getElementById('tuman');
+                tumanSelect.innerHTML = '<option value="">-- Avval viloyat tanlang --</option>';
+            }
+        });
+    });
+
+    // Function to load all Viloyatlar
+    function loadViloyatlar() {
+        fetch('/accounts/api/viloyatlar/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const viloyatSelect = document.getElementById('viloyat');
+                viloyatSelect.innerHTML = '<option value="">-- Viloyat tanlang --</option>';
+                
+                data.forEach(viloyat => {
+                    const option = document.createElement('option');
+                    option.value = viloyat.id;
+                    option.textContent = viloyat.name;
+                    viloyatSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading Viloyatlar:', error);
+                alert('Viloyatlarni yuklashda xatolik yuz berdi');
+            });
+    }
+
+    // Function to load Tumanlar for selected Viloyat
+    function loadTumanlar(viloyatId) {
+        const tumanSelect = document.getElementById('tuman');
+        tumanSelect.innerHTML = '<option value="">Tumanlar yuklanyapti...</option>';
+        
+        fetch(`/accounts/api/tumanlar/${viloyatId}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                tumanSelect.innerHTML = '<option value="">-- Tuman tanlang --</option>';
+                
+                if (data.length === 0) {
+                    tumanSelect.innerHTML += '<option disabled>Bu viloyat uchun tumanlar mavjud emas</option>';
+                    return;
+                }
+                
+                data.forEach(tuman => {
+                    const option = document.createElement('option');
+                    option.value = tuman.id;
+                    option.textContent = tuman.name;
+                    tumanSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading Tumanlar:', error);
+                tumanSelect.innerHTML = '<option disabled>Tumanlarni yuklashda xatolik yuz berdi</option>';
+            });
+    }
+</script>
+
+<!--
+INTEGRATION STEPS:
+
+1. Add the HTML above to your registration form (accounts/templates/accounts/register.html)
+
+2. Update your User model forms.py to include viloyat and tuman fields:
+   
+   In accounts/forms.py, add these fields to UserRegisterForm:
+   
+   class UserRegisterForm(UserCreationForm):
+       viloyat = forms.ModelChoiceField(
+           queryset=Viloyat.objects.all(),
+           required=True,
+           widget=forms.Select(attrs={'class': 'form-control'})
+       )
+       tuman = forms.ModelChoiceField(
+           queryset=Tuman.objects.all(),
+           required=True,
+           widget=forms.Select(attrs={'class': 'form-control'})
+       )
+
+3. Update User model to add viloyat and tuman fields if not already present:
+   
+   viloyat = models.ForeignKey(Viloyat, on_delete=models.SET_NULL, null=True, blank=True)
+   tuman = models.ForeignKey(Tuman, on_delete=models.SET_NULL, null=True, blank=True)
+
+4. Run migrations:
+   python manage.py makemigrations
+   python manage.py migrate
+
+5. Populate the data:
+   python manage.py populate_regions
+
+6. API Endpoints:
+   - GET /accounts/api/viloyatlar/ - Returns all regions
+   - GET /accounts/api/tumanlar/<viloyat_id>/ - Returns districts for a specific region
+
+7. The JavaScript will:
+   - Load all Viloyatlar on page load
+   - When a Viloyat is selected, it will fetch and populate the Tuman dropdown
+   - Handle errors gracefully
+-->

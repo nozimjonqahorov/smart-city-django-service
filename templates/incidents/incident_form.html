@@ -1,18 +1,41 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card" style="max-width: 600px; margin: auto;">
-    <h1>Muammo haqida ma'lumot</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        
-        <div style="margin-bottom: 1rem;">
-            <label>Qo'shimcha rasmlar (bir nechta tanlash mumkin):</label>
-            <input type="file" name="images" multiple>
+<section class="card panel-card" style="max-width: 900px; margin: 0 auto;">
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">{% if incident %}Arizani yangilash{% else %}Yangi ariza{% endif %}</span>
+            <h1 class="section-title">{% if incident %}Muammo ma'lumotlarini tahrirlash{% else %}Muammo haqida ma'lumot yuboring{% endif %}</h1>
+            <p class="section-copy">Ariza ko‘rib chiqilishi uchun maydonlarni to‘liq va aniq to‘ldiring. Zarur bo‘lsa bir nechta qo‘shimcha rasm ham yuklashingiz mumkin.</p>
         </div>
-        
-        <button type="submit" class="btn" style="width: 100%;">Yuborish</button>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="form-stack">
+        {% csrf_token %}
+        <div class="form-grid">
+            {% for field in form %}
+                <div class="{% if field.name == 'description' or field.name == 'photo' or field.name == 'address' %}full{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="field-help">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="full">
+                <label for="id_images">Qo'shimcha rasmlar</label>
+                <input id="id_images" type="file" name="images" multiple>
+                <small class="field-help">Bir nechta rasm tanlash mumkin. Bu ariza holatini aniqroq ko'rsatadi.</small>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.85rem; flex-wrap: wrap; margin-top: 1rem;">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline">Bekor qilish</a>
+            <button type="submit" class="btn">{% if incident %}O'zgarishlarni saqlash{% else %}Arizani yuborish{% endif %}</button>
+        </div>
     </form>
-</div>
+</section>
 {% endblock %}

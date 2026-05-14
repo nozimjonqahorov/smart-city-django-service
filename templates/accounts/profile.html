@@ -1,105 +1,282 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<style>
+    .profile-shell {
+        display: grid;
+        gap: 1.4rem;
+    }
+
+    .profile-hero {
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .profile-banner {
+        height: 180px;
+        background:
+            radial-gradient(circle at right top, rgba(245, 158, 11, 0.22), transparent 28%),
+            linear-gradient(135deg, #0f1f28 0%, #0f766e 54%, #14b8a6 100%);
+    }
+
+    .profile-overview {
+        display: flex;
+        align-items: flex-end;
+        gap: 1.5rem;
+        padding: 0 1.75rem 1.75rem;
+        margin-top: -58px;
+        flex-wrap: wrap;
+    }
+
+    .profile-avatar {
+        width: 132px;
+        height: 132px;
+        border-radius: 1.6rem;
+        object-fit: cover;
+        border: 6px solid rgba(255, 255, 255, 0.92);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .profile-avatar--fallback {
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--primary) 0%, #14b8a6 100%);
+        color: var(--white);
+        font-size: 3rem;
+        font-weight: 800;
+    }
+
+    .profile-meta {
+        flex: 1;
+        min-width: 240px;
+    }
+
+    .profile-name {
+        margin: 0;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        letter-spacing: -0.05em;
+    }
+
+    .profile-copy {
+        margin: 0.75rem 0 0;
+        color: var(--secondary);
+    }
+
+    .profile-chips {
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .info-list {
+        display: grid;
+        gap: 0.95rem;
+    }
+
+    .info-row {
+        padding: 1rem 1.1rem;
+        border-radius: 1rem;
+        background: rgba(15, 118, 110, 0.05);
+        border: 1px solid rgba(15, 118, 110, 0.08);
+    }
+
+    .info-row__label {
+        font-size: 0.74rem;
+        color: var(--secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 800;
+    }
+
+    .info-row__value {
+        margin-top: 0.35rem;
+        font-weight: 800;
+        color: var(--dark);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+
+    .stat-box {
+        padding: 1.15rem;
+        border-radius: 1.1rem;
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .stat-box__label {
+        font-size: 0.76rem;
+        color: var(--secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 800;
+    }
+
+    .stat-box__value {
+        margin-top: 0.45rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.9rem;
+        font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 900px; margin: auto;">
-    <div class="card" style="padding: 0; overflow: hidden; border: none; margin-bottom: 2rem;">
-        <!-- Header Profile Banner -->
-        <div style="height: 150px; background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%);"></div>
-        
-        <div style="padding: 0 2.5rem 2.5rem; margin-top: -50px; position: relative; display: flex; align-items: flex-end; gap: 2rem; flex-wrap: wrap;">
+<div class="profile-shell">
+    <section class="card profile-hero">
+        <div class="profile-banner"></div>
+        <div class="profile-overview">
             {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" style="width: 150px; height: 150px; border-radius: 1.5rem; object-fit: cover; border: 5px solid white; box-shadow: var(--shadow-lg);">
+                <img src="{{ user.avatar.url }}" alt="Avatar" class="profile-avatar">
             {% else %}
-                <div style="width: 150px; height: 150px; border-radius: 1.5rem; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; font-weight: 800; border: 5px solid white; box-shadow: var(--shadow-lg);">{{ user.username|first|upper }}</div>
+                <div class="profile-avatar profile-avatar--fallback">{{ user.username|first|upper }}</div>
             {% endif %}
-            
-            <div style="flex: 1; margin-bottom: 0.5rem;">
-                <h1 style="font-size: 2rem; font-weight: 800; margin: 0;">{{ user.get_full_name|default:user.username }}</h1>
-                <p style="color: var(--secondary); margin: 0.25rem 0 0; font-weight: 500;">
-                    <span class="status-badge" style="background: #e2e8f0; color: #475569;">{{ user.get_role_display }}</span>
+
+            <div class="profile-meta">
+                <span class="eyebrow">Shaxsiy kabinet</span>
+                <h1 class="profile-name">{{ user.get_full_name|default:user.username }}</h1>
+                <p class="profile-copy">Profil ma'lumotlari, rolga oid qisqa ko'rsatkichlar va hisob sozlamalari bir joyda jamlandi.</p>
+                <div class="profile-chips">
+                    <span class="chip">{{ user.get_role_display }}</span>
                     {% if user.region %}
-                        <span style="margin-left: 1rem;">{{ user.get_region_display }}</span>
+                        <span class="chip">{{ user.get_region_display }}</span>
                     {% endif %}
                     {% if user.city %}
-                        <span style="margin-left: 1rem;">{{ user.city }}</span>
+                        <span class="chip">{{ user.city }}</span>
                     {% endif %}
-                    {% if user.role == 'TECHNICIAN' %}
-                        <span style="margin-left: 1rem;">{{ user.category.name }}</span>
+                    {% if user.role == 'TECHNICIAN' and user.category %}
+                        <span class="chip">{{ user.category.name }}</span>
                     {% endif %}
-                </p>
+                </div>
             </div>
-            
-            <div style="margin-bottom: 0.5rem;">
-                <a href="{% url 'password_change' %}" class="btn btn-outline" style="font-size: 0.85rem;">Parolni o'zgartirish</a>
-            </div>
-        </div>
-    </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-        <!-- Edit Profile -->
-        <div class="card">
-            <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-weight: 800;">Ma'lumotlarni tahrirlash</h3>
-            <form method="post" enctype="multipart/form-data">
+            <a href="{% url 'password_change' %}" class="btn btn-outline">Parolni o'zgartirish</a>
+        </div>
+    </section>
+
+    <section class="profile-grid">
+        <div class="card panel-card">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">Ma'lumotlar</span>
+                    <h2 class="section-title">Profilni tahrirlash</h2>
+                    <p class="section-copy">Aloqa ma'lumotlari va hududiy ma'lumotlarni yangilab turing.</p>
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="form-stack">
                 {% csrf_token %}
-                {% for field in u_form %}
-                    {% if field.widget_type != 'hidden' %}
-                        <div>
-                            {{ field.label_tag }}
+                <div class="form-grid">
+                    {% for field in u_form %}
+                        {% if field.widget_type != 'hidden' %}
+                            <div class="{% if field.name == 'avatar' or field.name == 'category' %}full{% endif %}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="field-help">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <p class="field-error">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
                             {{ field }}
-                            {% if field.help_text %}
-                                <small style="color: #64748b;">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ field }}
-                    {% endif %}
-                {% endfor %}
-                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Saqlash</button>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">O'zgarishlarni saqlash</button>
             </form>
         </div>
 
-        <!-- Role Specific Section -->
-        <div class="card">
-            <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-weight: 800;">Faoliyat statistikasi</h3>
-            
-            {% if user.role == 'CITIZEN' %}
-                <div style="display: grid; gap: 1rem;">
-                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--secondary);">Yuborilgan arizalar</div>
-                        <div style="font-size: 1.5rem; font-weight: 800;">{{ user.reported_incidents.count }}</div>
-                    </div>
-                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--secondary);">Hal etilgan muammolar</div>
-                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--success);">{{ user.reported_incidents.filter.status.CLOSED.count|default:0 }}</div>
+        <div style="display: grid; gap: 1.4rem;">
+            <section class="card panel-card">
+                <div class="section-header" style="margin-bottom: 1rem;">
+                    <div>
+                        <span class="eyebrow">Ko'rsatkichlar</span>
+                        <h2 class="section-title" style="font-size: 1.8rem;">Faoliyat statistikasi</h2>
                     </div>
                 </div>
-            {% elif user.role == 'TECHNICIAN' %}
-                <div style="display: grid; gap: 1rem;">
-                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--secondary);">Biriktirilgan vazifalar</div>
-                        <div style="font-size: 1.5rem; font-weight: 800;">{{ user.assigned_tasks.count }}</div>
-                    </div>
-                    <div style="padding: 1rem; background: #f8fafc; border-radius: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--secondary);">Muvaffaqiyatli yakunlangan</div>
-                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--success);">{{ user.assigned_tasks.filter.status.CLOSED.count|default:0 }}</div>
+
+                <div class="stats-grid">
+                    {% if user.role == 'CITIZEN' %}
+                        <div class="stat-box">
+                            <div class="stat-box__label">Yuborilgan arizalar</div>
+                            <div class="stat-box__value">{{ user.reported_incidents.count }}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-box__label">Bildirishnomalar</div>
+                            <div class="stat-box__value">{{ user.notifications.count }}</div>
+                        </div>
+                    {% elif user.role == 'TECHNICIAN' %}
+                        <div class="stat-box">
+                            <div class="stat-box__label">Biriktirilgan ishlar</div>
+                            <div class="stat-box__value">{{ user.assigned_incidents.count }}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-box__label">Bildirishnomalar</div>
+                            <div class="stat-box__value">{{ user.notifications.count }}</div>
+                        </div>
+                    {% else %}
+                        <div class="stat-box">
+                            <div class="stat-box__label">Boshqarilgan arizalar</div>
+                            <div class="stat-box__value">{{ user.managed_incidents.count }}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-box__label">Bildirishnomalar</div>
+                            <div class="stat-box__value">{{ user.notifications.count }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="card panel-card">
+                <div class="section-header" style="margin-bottom: 1rem;">
+                    <div>
+                        <span class="eyebrow">Hisob</span>
+                        <h2 class="section-title" style="font-size: 1.8rem;">Asosiy ma'lumotlar</h2>
                     </div>
                 </div>
-            {% elif user.role == 'OPERATOR' %}
-                <p>Operator sifatida siz shahrimiz xavfsizligi va qulayligini ta'minlashda muhim o'rin tutasiz.</p>
-                <ul style="padding-left: 1.2rem; color: var(--secondary); font-size: 0.9rem;">
-                    <li>Arizalarni saralash</li>
-                    <li>Texniklarni boshqarish</li>
-                    <li>Sifat nazorati</li>
-                </ul>
-            {% endif %}
-            
-            <div style="margin-top: 2rem; border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-                <p style="font-size: 0.85rem; color: var(--secondary);">Ro'yxatdan o'tilgan sana: <br><strong>{{ user.date_joined|date:"d-F, Y" }}</strong></p>
-            </div>
+
+                <div class="info-list">
+                    <div class="info-row">
+                        <div class="info-row__label">Email</div>
+                        <div class="info-row__value">{{ user.email|default:"Kiritilmagan" }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-row__label">Telefon</div>
+                        <div class="info-row__value">{{ user.phone|default:"Kiritilmagan" }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-row__label">Ro'yxatdan o'tgan sana</div>
+                        <div class="info-row__value">{{ user.date_joined|date:"d-F, Y" }}</div>
+                    </div>
+                </div>
+            </section>
         </div>
-    </div>
+    </section>
 </div>
 {% endblock %}

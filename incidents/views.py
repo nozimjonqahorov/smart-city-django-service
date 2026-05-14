@@ -31,13 +31,20 @@ class DashboardView(LoginRequiredMixin, View):
         # Search/Filter
         status = request.GET.get('status')
         category_id = request.GET.get('category')
+        region = request.GET.get('region')
+        date = request.GET.get('date')
         if status:
             queryset = queryset.filter(status=status)
         if category_id:
             queryset = queryset.filter(category_id=category_id)
+        if region:
+            queryset = queryset.filter(region=region)
+        if date:
+            queryset = queryset.filter(created_at__date=date)
             
         incidents = queryset.order_by('-created_at')
         categories = Category.objects.all()
+        regions = Incident._meta.get_field('region').choices
         
         # Calculate counts
         total_count = incidents.count()
@@ -50,6 +57,7 @@ class DashboardView(LoginRequiredMixin, View):
         context = {
             'incidents': incidents,
             'categories': categories,
+            'regions': regions,
             'total_count': total_count,
             'in_progress_count': in_progress_count,
             'reopened_count': reopened_count,

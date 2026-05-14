@@ -1,56 +1,301 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<div class="hero-section card" style="text-align: center; padding: 6rem 2rem; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; border: none; overflow: hidden; position: relative;">
-    <div style="position: relative; z-index: 2;">
-        <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.025em;">Smart City Incident Management</h1>
-        <p style="font-size: 1.25rem; color: #e0e7ff; max-width: 700px; margin: 0 auto 3rem; font-weight: 300;">
-            Shahrimizni birgalikda rivojlantiramiz. Muammolar haqida xabar bering, jarayonni kuzating va sifatli natijaga erishing.
-        </p>
-
-        {% if not user.is_authenticated %}
-            <div style="display: flex; justify-content: center; gap: 1.5rem;">
-                <a href="{% url 'register' %}" class="btn" style="background: white; color: var(--primary); padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: 0.75rem;">Hozir boshlash</a>
-                <a href="{% url 'login' %}" class="btn" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: 0.75rem;">Kirish</a>
-            </div>
-        {% else %}
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-                <p style="font-size: 1.1rem;">Xush kelibsiz, <strong>{{ user.first_name|default:user.username }}</strong>!</p>
-                <a href="{% url 'dashboard' %}" class="btn" style="background: white; color: var(--primary); padding: 1rem 2rem;">Dashboardga o'tish</a>
-            </div>
-        {% endif %}
-    </div>
-    
-    <!-- Abstract shapes for flair -->
-    <div style="position: absolute; top: -10%; left: -10%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-    <div style="position: absolute; bottom: -10%; right: -10%; width: 400px; height: 400px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-</div>
-
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 4rem;">
-    <div class="card" style="text-align: center; border-bottom: 4px solid var(--primary);">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">📢</div>
-        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Fuqarolar uchun</h3>
-        <p style="color: var(--secondary);">Infratuzilma muammolari haqida tezkor xabar bering va ularni bartaraf etilishini real vaqtda kuzating.</p>
-    </div>
-    <div class="card" style="text-align: center; border-bottom: 4px solid var(--warning);">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🛠️</div>
-        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Texniklar uchun</h3>
-        <p style="color: var(--secondary);">Sizga biriktirilgan ishlarni qabul qiling, bajaring va natijani rasm orqali isbotlang.</p>
-    </div>
-    <div class="card" style="text-align: center; border-bottom: 4px solid var(--success);">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
-        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Operatorlar uchun</h3>
-        <p style="color: var(--secondary);">Barcha muammolarni nazorat qiling, resurslarni to'g'ri taqsimlang va sifatni boshqaring.</p>
-    </div>
-</div>
-
+{% block extra_css %}
 <style>
-    .hero-section h1 {
-        animation: slideInUp 0.6s ease-out;
+    .home-shell {
+        display: grid;
+        gap: 1.6rem;
     }
-    @keyframes slideInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+
+    .home-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 3rem;
+        border-radius: 2rem;
+        background:
+            radial-gradient(circle at top right, rgba(245, 158, 11, 0.22), transparent 28%),
+            linear-gradient(135deg, #0f1f28 0%, #0f766e 52%, #14b8a6 100%);
+        color: var(--white);
+        box-shadow: 0 34px 64px -40px rgba(15, 31, 40, 0.92);
+    }
+
+    .home-hero::before,
+    .home-hero::after {
+        content: "";
+        position: absolute;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .home-hero::before {
+        width: 260px;
+        height: 260px;
+        top: -110px;
+        right: -70px;
+    }
+
+    .home-hero::after {
+        width: 180px;
+        height: 180px;
+        left: 45%;
+        bottom: -80px;
+    }
+
+    .home-hero__content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+        gap: 1.6rem;
+        align-items: center;
+    }
+
+    .home-title {
+        margin: 0.75rem 0 0;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2.5rem, 5vw, 4.8rem);
+        line-height: 0.98;
+        letter-spacing: -0.06em;
+    }
+
+    .home-copy {
+        margin: 1.2rem 0 0;
+        max-width: 700px;
+        color: rgba(235, 244, 246, 0.9);
+        font-size: 1.05rem;
+    }
+
+    .home-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.85rem;
+        margin-top: 1.75rem;
+    }
+
+    .home-actions .btn {
+        min-width: 180px;
+    }
+
+    .home-actions .btn-outline {
+        color: var(--white);
+        border-color: rgba(255, 255, 255, 0.26);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .home-actions .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.14);
+    }
+
+    .hero-metrics {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .hero-metric {
+        padding: 1.2rem;
+        border-radius: 1.35rem;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(12px);
+    }
+
+    .hero-metric__value {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .hero-metric__label {
+        margin-top: 0.35rem;
+        color: rgba(235, 244, 246, 0.82);
+    }
+
+    .home-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.2rem;
+    }
+
+    .feature-card {
+        padding: 1.5rem;
+    }
+
+    .feature-icon {
+        width: 3.25rem;
+        height: 3.25rem;
+        border-radius: 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary);
+        background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(245, 158, 11, 0.14));
+    }
+
+    .feature-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 800;
+    }
+
+    .feature-copy {
+        margin: 0.7rem 0 0;
+        color: var(--secondary);
+    }
+
+    .flow-card {
+        padding: 1.8rem;
+    }
+
+    .flow-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .flow-step {
+        position: relative;
+        padding: 1.25rem;
+        border-radius: 1.2rem;
+        background: rgba(15, 118, 110, 0.05);
+        border: 1px solid rgba(15, 118, 110, 0.08);
+    }
+
+    .flow-step__number {
+        width: 2rem;
+        height: 2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        margin-bottom: 0.85rem;
+        background: var(--dark);
+        color: var(--white);
+        font-size: 0.85rem;
+        font-weight: 800;
+    }
+
+    .flow-step__title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .flow-step__copy {
+        margin: 0.55rem 0 0;
+        color: var(--secondary);
+        font-size: 0.92rem;
+    }
+
+    @media (max-width: 1080px) {
+        .home-hero__content,
+        .home-grid,
+        .flow-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .home-hero {
+            padding: 1.5rem;
+        }
+
+        .home-actions .btn {
+            width: 100%;
+        }
     }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="home-shell">
+    <section class="home-hero card">
+        <div class="home-hero__content">
+            <div>
+                <span class="eyebrow" style="background: rgba(255,255,255,0.12); color: var(--white);">Shahar xizmatlari uchun yagona maydon</span>
+                <h1 class="home-title">Muammoni yuboring. Jarayonni kuzating. Natijani tez oling.</h1>
+                <p class="home-copy">Smart City platformasi fuqarolar, operatorlar va texniklar o‘rtasidagi ish oqimini bir joyga yig‘adi. Ariza berishdan boshlab yakuniy baholashgacha bo‘lgan jarayon aniq, tartibli va ko‘rinadigan bo‘ladi.</p>
+
+                <div class="home-actions">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn">Ro'yxatdan o'tish</a>
+                        <a href="{% url 'login' %}" class="btn btn-outline">Kirish</a>
+                    {% else %}
+                        <a href="{% url 'dashboard' %}" class="btn">Dashboardga o'tish</a>
+                        <a href="{% url 'profile' %}" class="btn btn-outline">Profilni ko'rish</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="hero-metrics">
+                <div class="hero-metric">
+                    <div class="hero-metric__value">24/7</div>
+                    <div class="hero-metric__label">Shahar muammolarini qabul qilish va nazorat qilish</div>
+                </div>
+                <div class="hero-metric">
+                    <div class="hero-metric__value">3 rol</div>
+                    <div class="hero-metric__label">Fuqaro, operator va texnik uchun moslashgan ish muhiti</div>
+                </div>
+                <div class="hero-metric">
+                    <div class="hero-metric__value">1 oqim</div>
+                    <div class="hero-metric__label">Yuborish, biriktirish, bajarish va baholash bir zanjirda</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-grid">
+        <article class="card feature-card">
+            <div class="feature-icon">01</div>
+            <h3 class="feature-title">Fuqarolar uchun qulay</h3>
+            <p class="feature-copy">Muammoni surat bilan yuboring, holatini kuzating va yakunda xizmat sifati bo‘yicha baho bering.</p>
+        </article>
+        <article class="card feature-card">
+            <div class="feature-icon">02</div>
+            <h3 class="feature-title">Operator uchun nazorat</h3>
+            <p class="feature-copy">Hudud, kategoriya va holat bo‘yicha arizalarni saralang, mos texnikka biriktiring va oqimni boshqaring.</p>
+        </article>
+        <article class="card feature-card">
+            <div class="feature-icon">03</div>
+            <h3 class="feature-title">Texnik uchun tez hisobot</h3>
+            <p class="feature-copy">Biriktirilgan vazifalarni bajaring, natija rasmi va izoh bilan hisobot topshiring.</p>
+        </article>
+    </section>
+
+    <section class="card flow-card">
+        <div class="section-header">
+            <div>
+                <span class="eyebrow">Jarayon</span>
+                <h2 class="section-title">Ishlash tartibi sodda va aniq</h2>
+                <p class="section-copy">Har bir ariza tushunarli ketma-ketlikda yuradi. Bu foydalanuvchi uchun ham, xizmat ko‘rsatuvchi tomon uchun ham qulaylik beradi.</p>
+            </div>
+        </div>
+
+        <div class="flow-grid">
+            <div class="flow-step">
+                <div class="flow-step__number">1</div>
+                <h3 class="flow-step__title">Ariza yuboriladi</h3>
+                <p class="flow-step__copy">Fuqaro muammoni hudud va kategoriya bilan birga tizimga kiritadi.</p>
+            </div>
+            <div class="flow-step">
+                <div class="flow-step__number">2</div>
+                <h3 class="flow-step__title">Operator tekshiradi</h3>
+                <p class="flow-step__copy">Ariza mos texnikka yo‘naltiriladi yoki kerak bo‘lsa qaytariladi.</p>
+            </div>
+            <div class="flow-step">
+                <div class="flow-step__number">3</div>
+                <h3 class="flow-step__title">Texnik bajaradi</h3>
+                <p class="flow-step__copy">Ish yakunlangach natija foto va hisobot bilan tizimga joylanadi.</p>
+            </div>
+            <div class="flow-step">
+                <div class="flow-step__number">4</div>
+                <h3 class="flow-step__title">Baholash yopiladi</h3>
+                <p class="flow-step__copy">Fuqaro sifatni baholaydi va ariza yakuniy holatga o‘tadi.</p>
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}

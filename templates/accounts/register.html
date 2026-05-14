@@ -1,82 +1,198 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<style>
+    .register-card {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .register-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto;
+        height: 6px;
+        background: linear-gradient(90deg, var(--primary) 0%, #14b8a6 52%, var(--accent) 100%);
+    }
+
+    .register-grid {
+        margin-top: 1.35rem;
+    }
+
+    .register-grid #div_description {
+        grid-column: 1 / -1;
+    }
+
+    .required-tag {
+        color: var(--danger);
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 920px) {
+        .register-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem 0;">
-    <div class="card animate-fade" style="max-width: 500px; width: 100%; box-shadow: var(--shadow-lg);">
-        <div style="text-align: center; margin-bottom: 2.5rem;">
-            <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">Ro'yxatdan o'tish</h1>
-            <p style="color: var(--secondary);">Smart City hamjamiyatiga qo'shiling</p>
+<section class="auth-shell">
+    <div class="card auth-card auth-card--wide register-card">
+        <div class="auth-head">
+            <div class="auth-icon">UP</div>
+            <span class="eyebrow">Yangi profil</span>
+            <h1 class="section-title" style="margin-top: 1rem;">Smart City hamjamiyatiga qo'shiling</h1>
+            <p class="section-copy" style="margin-left: auto; margin-right: auto;">Viloyat va tuman bo‘yicha ro‘yxatdan o‘ting, keyin arizalarni qulay tarzda yuborish va kuzatish mumkin bo‘ladi.</p>
         </div>
 
-        <form method="post" id="register-form" enctype="multipart/form-data">
+        <form method="post" id="register-form" enctype="multipart/form-data" class="form-stack" data-regions-url="{% url 'api_viloyatlar' %}" data-districts-url-template="{% url 'api_tumanlar' 0 %}">
             {% csrf_token %}
-            {% for field in form %}
-                <div id="div_{{ field.name }}">
-                    <label style="display: flex; justify-content: space-between;">
-                        {{ field.label }}
-                        {% if field.field.required %}<span style="color: var(--danger); font-size: 0.7rem;">(Majburiy)</span>{% endif %}
-                    </label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <small style="color: #64748b; font-size: 0.75rem;">{{ field.help_text }}</small>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <p style="color: var(--danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn" style="width: 100%; padding: 0.875rem; margin-top: 2rem; font-size: 1rem; border-radius: 0.75rem;">Hisob yaratish</button>
+            <div class="form-grid register-grid">
+                {% for field in form %}
+                    <div id="div_{{ field.name }}" class="{% if field.name == 'avatar' or field.name == 'category' %}full{% endif %}">
+                        <label for="{{ field.id_for_label }}">
+                            <span>{{ field.label }}</span>
+                            {% if field.field.required %}
+                                <span class="required-tag">Majburiy</span>
+                            {% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="field-help">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p class="field-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 1.3rem;">Hisob yaratish</button>
         </form>
 
-        <div style="margin-top: 2rem; border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-            <p style="text-align: center; color: var(--secondary); margin-bottom: 1rem;">Yoki quyidagilar orqali ro'yxatdan o'ting</p>
-            <div style="display: grid; gap: 0.75rem;">
-                <a href="/accounts/google/login/" class="btn btn-outline" style="width: 100%; justify-content: center; gap: 0.75rem; text-decoration: none;">
-                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06L5.84 9.9C6.71 7.31 9.14 5.38 12 5.38z"/>
-                    </svg>
-                    Google orqali ro'yxatdan o'tish
-                </a>
-                <a href="/accounts/github/login/" class="btn btn-outline" style="width: 100%; justify-content: center; gap: 0.75rem; text-decoration: none;">
-                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="#181717">
-                        <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.17c-3.2.69-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18A11.02 11.02 0 0 1 12 6.04c.98 0 1.96.13 2.88.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.42.36.78 1.07.78 2.16v3.15c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
-                    </svg>
-                    GitHub orqali ro'yxatdan o'tish
-                </a>
-                <a href="/accounts/telegram/login/" class="btn btn-outline" style="width: 100%; justify-content: center; gap: 0.75rem; text-decoration: none;">
-                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="#26A5E4">
-                        <path d="M21.94 4.16c.32-1.33-.51-1.85-1.42-1.48L2.83 9.49c-1.21.48-1.19 1.15-.2 1.45l4.54 1.42 10.53-6.64c.5-.3.95-.14.58.19l-8.53 7.7-.32 4.8c.47 0 .68-.22.94-.48l2.26-2.2 4.7 3.47c.87.48 1.49.23 1.7-.8l2.91-14.24z"/>
-                    </svg>
-                    Telegram orqali ro'yxatdan o'tish
-                </a>
-            </div>
-            <small style="display: block; color: #64748b; text-align: center; margin-top: 0.75rem;">Ishlashi uchun admin panelda Google, GitHub va Telegram provider kalitlarini kiriting.</small>
-        </div>
-        
-        <div style="margin-top: 2rem; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-            <p style="color: var(--secondary);">Profilingiz bormi? <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Kirish</a></p>
+        <div style="margin-top: 1.75rem; padding-top: 1.4rem; border-top: 1px solid rgba(148, 163, 184, 0.18); text-align: center;">
+            <p style="margin: 0; color: var(--secondary);">Profilingiz bormi? <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 800; text-decoration: none;">Kirish</a></p>
         </div>
     </div>
-</div>
+</section>
+{% endblock %}
 
+{% block extra_scripts %}
 <script>
-    const roleSelect = document.querySelector('select[name="role"]');
+    const registerForm = document.getElementById('register-form');
+    const roleSelect = registerForm?.querySelector('select[name="role"]');
     const categoryDiv = document.querySelector('#div_category');
-    
+    const regionSelect = registerForm?.querySelector('select[name="region"]');
+    const citySelect = registerForm?.querySelector('select[name="city"]');
+    const regionsUrl = registerForm?.dataset.regionsUrl;
+    const districtsUrlTemplate = registerForm?.dataset.districtsUrlTemplate;
+
     function toggleCategory() {
-        if (roleSelect && roleSelect.value === 'TECHNICIAN') {
+        if (roleSelect && categoryDiv && roleSelect.value === 'TECHNICIAN') {
             categoryDiv.style.display = 'block';
         } else if (categoryDiv) {
             categoryDiv.style.display = 'none';
         }
     }
-    
+
+    function setCityPlaceholder(text) {
+        if (!citySelect) {
+            return;
+        }
+
+        citySelect.innerHTML = `<option value="">${text}</option>`;
+        citySelect.disabled = true;
+    }
+
+    async function loadRegions(selectedRegionId = '') {
+        if (!regionSelect || !regionsUrl) {
+            return;
+        }
+
+        try {
+            const response = await fetch(regionsUrl);
+            if (!response.ok) {
+                throw new Error('Viloyatlar yuklanmadi');
+            }
+
+            const data = await response.json();
+            regionSelect.innerHTML = '<option value="">Viloyatni tanlang</option>';
+
+            data.regions.forEach((region) => {
+                const option = document.createElement('option');
+                option.value = region.id;
+                option.textContent = region.name;
+                if (String(region.id) === String(selectedRegionId)) {
+                    option.selected = true;
+                }
+                regionSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Viloyatlarni yuklashda xatolik:', error);
+        }
+    }
+
+    async function loadDistricts(regionId, selectedCityId = '') {
+        if (!citySelect || !districtsUrlTemplate) {
+            return;
+        }
+
+        if (!regionId) {
+            setCityPlaceholder('Avval viloyatni tanlang');
+            return;
+        }
+
+        setCityPlaceholder('Tumanlar yuklanmoqda...');
+
+        try {
+            const response = await fetch(districtsUrlTemplate.replace('/0/', `/${regionId}/`));
+            if (!response.ok) {
+                throw new Error('Tumanlar yuklanmadi');
+            }
+
+            const data = await response.json();
+            citySelect.innerHTML = '<option value="">Tumanni tanlang</option>';
+
+            data.districts.forEach((district) => {
+                const option = document.createElement('option');
+                option.value = district.id;
+                option.textContent = district.name;
+                if (String(district.id) === String(selectedCityId)) {
+                    option.selected = true;
+                }
+                citySelect.appendChild(option);
+            });
+
+            citySelect.disabled = false;
+        } catch (error) {
+            console.error('Tumanlarni yuklashda xatolik:', error);
+            setCityPlaceholder('Tumanlarni yuklab bo\'lmadi');
+        }
+    }
+
     if (roleSelect) {
         roleSelect.addEventListener('change', toggleCategory);
         toggleCategory();
+    }
+
+    if (regionSelect && citySelect) {
+        const selectedRegionId = regionSelect.value;
+        const selectedCityId = citySelect.value;
+
+        loadRegions(selectedRegionId).then(() => {
+            if (selectedRegionId) {
+                return loadDistricts(selectedRegionId, selectedCityId);
+            }
+            setCityPlaceholder('Avval viloyatni tanlang');
+        });
+
+        regionSelect.addEventListener('change', () => {
+            loadDistricts(regionSelect.value);
+        });
     }
 </script>
 {% endblock %}

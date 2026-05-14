@@ -1,184 +1,449 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<style>
+    .detail-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .detail-stack {
+        display: grid;
+        gap: 1.4rem;
+    }
+
+    .detail-hero {
+        padding: 1.75rem;
+        background:
+            radial-gradient(circle at top right, rgba(245, 158, 11, 0.18), transparent 24%),
+            linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(255, 255, 255, 0.78));
+    }
+
+    .detail-title {
+        margin: 0.8rem 0 0;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1;
+        letter-spacing: -0.05em;
+    }
+
+    .detail-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.9rem;
+        margin-top: 1.3rem;
+    }
+
+    .detail-meta-box {
+        padding: 1rem;
+        border-radius: 1.05rem;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .detail-meta-box__label {
+        font-size: 0.74rem;
+        color: var(--secondary);
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .detail-meta-box__value {
+        margin-top: 0.45rem;
+        font-weight: 800;
+    }
+
+    .detail-inline {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 1rem;
+    }
+
+    .priority-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.42rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.8);
+        font-size: 0.84rem;
+        font-weight: 800;
+    }
+
+    .priority-dot {
+        width: 0.58rem;
+        height: 0.58rem;
+        border-radius: 999px;
+        background: currentColor;
+    }
+
+    .detail-image {
+        width: 100%;
+        max-height: 520px;
+        object-fit: cover;
+        border-radius: 1.25rem;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .detail-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.85rem;
+        margin-top: 1rem;
+    }
+
+    .detail-gallery img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .detail-copy {
+        color: var(--secondary);
+        white-space: pre-wrap;
+    }
+
+    .timeline {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .timeline-item {
+        display: grid;
+        grid-template-columns: 120px 18px minmax(0, 1fr);
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .timeline-time {
+        font-size: 0.82rem;
+        color: var(--secondary);
+        font-weight: 700;
+        text-align: right;
+        padding-top: 0.15rem;
+    }
+
+    .timeline-dot {
+        width: 14px;
+        height: 14px;
+        margin-top: 0.2rem;
+        border-radius: 999px;
+        background: var(--primary);
+        box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.12);
+    }
+
+    .timeline-card {
+        padding: 1rem 1.1rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .detail-side {
+        position: sticky;
+        top: 6rem;
+    }
+
+    .manage-card {
+        background: linear-gradient(180deg, rgba(15, 31, 40, 0.96) 0%, rgba(15, 31, 40, 0.9) 100%);
+        color: var(--white);
+    }
+
+    .manage-card label,
+    .manage-card .section-copy {
+        color: rgba(235, 244, 246, 0.78);
+    }
+
+    .manage-card input,
+    .manage-card select,
+    .manage-card textarea {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.14);
+        color: var(--white);
+    }
+
+    .feedback-list {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .feedback-card {
+        padding: 1.1rem 1.2rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .feedback-rating {
+        color: var(--warning);
+        font-weight: 800;
+    }
+
+    @media (max-width: 1100px) {
+        .detail-shell {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-side {
+            position: static;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .detail-meta-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .timeline-item {
+            grid-template-columns: 1fr;
+        }
+
+        .timeline-time {
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .detail-meta-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; align-items: flex-start;">
-    
-    <div class="animate-fade">
-        <div class="card" style="padding: 2.5rem;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
-                <div>
-                    <span class="status-badge status-{{ incident.status|lower }}" style="margin-bottom: 1rem; display: inline-block;">{{ incident.get_status_display }}</span>
-                    <h1 style="font-size: 2.5rem; font-weight: 800; margin: 0; letter-spacing: -0.02em;">{{ incident.title }}</h1>
-                    <p style="color: var(--secondary); margin-top: 0.5rem; font-size: 1.1rem;">{{ incident.category.name }}</p>
+<div class="detail-shell">
+    <div class="detail-stack">
+        <section class="card detail-hero">
+            <span class="status-badge status-{{ incident.status|lower }}">{{ incident.get_status_display }}</span>
+            <h1 class="detail-title">{{ incident.title }}</h1>
+            <p class="section-copy">{{ incident.category.name }} bo'yicha ariza. Tizim holati, hududiy ma'lumotlar va bajarilish tarixi quyida ko'rsatilgan.</p>
+
+            <div class="detail-inline">
+                <span class="chip">ID #{{ incident.id }}</span>
+                <span class="priority-pill" style="color: {% if incident.priority == 'HIGH' %}var(--danger){% elif incident.priority == 'MEDIUM' %}var(--warning){% else %}var(--success){% endif %};">
+                    <span class="priority-dot"></span>
+                    {{ incident.get_priority_display }} daraja
+                </span>
+            </div>
+
+            <div class="detail-meta-grid">
+                <div class="detail-meta-box">
+                    <div class="detail-meta-box__label">Manzil</div>
+                    <div class="detail-meta-box__value">{{ incident.address }}</div>
                 </div>
-                <div style="text-align: right;">
-                    <div style="font-weight: 700; color: {% if incident.priority == 'HIGH' %}var(--danger){% elif incident.priority == 'MEDIUM' %}var(--warning){% else %}var(--success){% endif %}; font-size: 1.1rem;">
-                        {{ incident.get_priority_display }} darajali
-                    </div>
-                    <div style="font-size: 0.85rem; color: var(--secondary); margin-top: 0.25rem;">ID: #{{ incident.id }}</div>
+                <div class="detail-meta-box">
+                    <div class="detail-meta-box__label">Viloyat</div>
+                    <div class="detail-meta-box__value">{{ incident.get_region_display|default:"-" }}</div>
+                </div>
+                <div class="detail-meta-box">
+                    <div class="detail-meta-box__label">Tuman</div>
+                    <div class="detail-meta-box__value">{{ incident.city|default:"-" }}</div>
+                </div>
+                <div class="detail-meta-box">
+                    <div class="detail-meta-box__label">Yaratilgan sana</div>
+                    <div class="detail-meta-box__value">{{ incident.created_at|date:"d-M, Y H:i" }}</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card panel-card">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">Media</span>
+                    <h2 class="section-title" style="font-size: 1.9rem;">Biriktirilgan rasmlar</h2>
                 </div>
             </div>
 
-            <div style="display: grid; gap: 2rem;">
-                <!-- Main Image and Gallery -->
+            {% if incident.photo %}
+                <img src="{{ incident.photo.url }}" class="detail-image" alt="Asosiy rasm">
+            {% endif %}
+
+            {% if incident.images.all %}
+                <div class="detail-gallery">
+                    {% for img in incident.images.all %}
+                        <a href="{{ img.image.url }}" target="_blank" rel="noopener noreferrer">
+                            <img src="{{ img.image.url }}" alt="Qo'shimcha rasm">
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="card panel-card">
+            <div class="section-header">
                 <div>
-                    {% if incident.photo %}
-                        <img src="{{ incident.photo.url }}" style="width: 100%; max-height: 500px; object-fit: contain; background: #000; border-radius: 1rem; box-shadow: var(--shadow-lg);" alt="Main Image">
-                    {% endif %}
-                    
-                    {% if incident.images.all %}
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-                        {% for img in incident.images.all %}
-                            <a href="{{ img.image.url }}" target="_blank">
-                                <img src="{{ img.image.url }}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 0.75rem; border: 2px solid white; box-shadow: var(--shadow);" alt="Extra Image">
-                            </a>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-
-                <div style="border-top: 1px solid #f1f5f9; padding-top: 2rem;">
-                    <h3 style="font-weight: 800; margin-bottom: 1rem;">Muammo tavsifi</h3>
-                    <p style="color: var(--secondary); white-space: pre-wrap; font-size: 1.1rem; line-height: 1.7;">{{ incident.description }}</p>
-                </div>
-
-                <div style="display: flex; gap: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 1rem;">
-                    <div>
-                        <label>Manzil</label>
-                        <p style="margin: 0; font-weight: 600;">📍 {{ incident.address }}</p>
-                    </div>
-                    <div>
-                        <label>Sana</label>
-                        <p style="margin: 0; font-weight: 600;">📅 {{ incident.created_at|date:"d-M, Y H:i" }}</p>
-                    </div>
-                </div>
-
-                <!-- Moved Logs here for more space -->
-                <div style="margin-top: 2rem; border-top: 1px solid #f1f5f9; padding-top: 2rem;">
-                    <h3 style="font-weight: 800; margin-bottom: 1.5rem;">Tarix (Loglar)</h3>
-                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        {% for log in incident.logs.all|dictsortreversed:"created_at" %}
-                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
-                            <div style="min-width: 120px; text-align: right; color: var(--secondary); font-size: 0.8rem; font-weight: 500;">
-                                {{ log.created_at|date:"d-M, H:i" }}
-                            </div>
-                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--primary); margin-top: 5px; flex-shrink: 0; box-shadow: 0 0 0 4px #eef2ff;"></div>
-                            <div style="flex: 1; background: white; padding: 1rem; border-radius: 0.75rem; border: 1px solid #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                                <div style="font-weight: 700; color: var(--dark);">{{ log.action }}</div>
-                                <div style="color: var(--secondary); font-size: 0.8rem; margin-top: 0.25rem;">Ijrochi: {{ log.user.username }} ({{ log.user.get_role_display }})</div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
+                    <span class="eyebrow">Tavsif</span>
+                    <h2 class="section-title" style="font-size: 1.9rem;">Muammo mazmuni</h2>
                 </div>
             </div>
-        </div>
+            <div class="detail-copy">{{ incident.description }}</div>
+        </section>
 
         {% if incident.result_photo or incident.result_comment %}
-        <div class="card animate-fade" style="margin-top: 2rem; border-left: 6px solid var(--success); background: #f0fdf4;">
-            <h3 style="font-weight: 800; color: #065f46; margin-top: 0;">🛠️ Bajarilgan ish natijasi</h3>
-            {% if incident.result_photo %}
-                <img src="{{ incident.result_photo.url }}" style="width: 100%; border-radius: 1rem; margin-bottom: 1.5rem; box-shadow: var(--shadow);" alt="Result Proof">
-            {% endif %}
-            <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid #dcfce7;">
-                <p style="margin: 0; color: #166534; font-size: 1.1rem; line-height: 1.6;">{{ incident.result_comment }}</p>
-            </div>
-        </div>
-        {% endif %}
-        
-        <!-- Feedback History -->
-        {% if incident.feedbacks.all %}
-        <div style="margin-top: 3rem;">
-            <h3 style="font-weight: 800; margin-bottom: 1.5rem;">Foydalanuvchi fikrlari ({{ incident.feedbacks.count }})</h3>
-            {% for f in incident.feedbacks.all|dictsortreversed:"id" %}
-                <div class="card" style="margin-bottom: 1rem; border-left: 4px solid {% if f.rating > 2 %}var(--success){% else %}var(--danger){% endif %}; padding: 1.5rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <div style="font-size: 1.25rem; font-weight: 800; color: #f59e0b;">
-                            {% for i in "12345"|make_list %}{% if forloop.counter <= f.rating %}★{% else %}☆{% endif %}{% endfor %}
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--secondary);">{{ f.id }}# Feedback</div>
+            <section class="card panel-card" style="background: linear-gradient(180deg, rgba(220, 252, 231, 0.84), rgba(255, 255, 255, 0.92));">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow" style="background: rgba(5, 150, 105, 0.12); color: var(--success);">Natija</span>
+                        <h2 class="section-title" style="font-size: 1.9rem;">Bajarilgan ish hisobotlari</h2>
                     </div>
-                    <p style="margin: 0; color: var(--secondary);">{{ f.comment }}</p>
                 </div>
-            {% endfor %}
-        </div>
+
+                {% if incident.result_photo %}
+                    <img src="{{ incident.result_photo.url }}" class="detail-image" alt="Natija rasmi" style="margin-bottom: 1rem;">
+                {% endif %}
+
+                {% if incident.result_comment %}
+                    <div class="detail-copy" style="color: #166534;">{{ incident.result_comment }}</div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <section class="card panel-card">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">Tarix</span>
+                    <h2 class="section-title" style="font-size: 1.9rem;">Harakatlar logi</h2>
+                </div>
+            </div>
+
+            <div class="timeline">
+                {% for log in incident.logs.all|dictsortreversed:"created_at" %}
+                    <div class="timeline-item">
+                        <div class="timeline-time">{{ log.created_at|date:"d-M, H:i" }}</div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div style="font-weight: 800;">{{ log.action }}</div>
+                            <div class="field-help" style="margin-top: 0.3rem;">Ijrochi: {{ log.user.username }} ({{ log.user.get_role_display }})</div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">Hali loglar mavjud emas.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if incident.feedbacks.all %}
+            <section class="card panel-card">
+                <div class="section-header">
+                    <div>
+                        <span class="eyebrow">Fikrlar</span>
+                        <h2 class="section-title" style="font-size: 1.9rem;">Foydalanuvchi baholari</h2>
+                    </div>
+                </div>
+
+                <div class="feedback-list">
+                    {% for f in incident.feedbacks.all|dictsortreversed:"id" %}
+                        <article class="feedback-card">
+                            <div style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                                <div class="feedback-rating">Baho: {{ f.rating }}/5</div>
+                                <div class="field-help" style="margin-top: 0;">Feedback #{{ f.id }}</div>
+                            </div>
+                            <p style="margin: 0.65rem 0 0; color: var(--secondary);">{{ f.comment|default:"Izoh qoldirilmagan." }}</p>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
         {% endif %}
     </div>
 
-    <!-- Management Sidebar -->
-    <div style="position: sticky; top: 6rem;">
-        <div class="card" style="background: var(--dark); color: white;">
-            <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-weight: 800; color: #818cf8;">Boshqaruv</h3>
-            
+    <aside class="detail-side">
+        <section class="card panel-card manage-card">
+            <div class="section-header" style="margin-bottom: 1rem;">
+                <div>
+                    <span class="eyebrow" style="background: rgba(255, 255, 255, 0.1); color: var(--white);">Boshqaruv</span>
+                    <h2 class="section-title" style="font-size: 1.9rem; color: var(--white);">Amallar paneli</h2>
+                    <p class="section-copy">Rolingizga mos boshqaruv amallari shu joyda chiqadi.</p>
+                </div>
+            </div>
+
             {% if user.role == 'OPERATOR' %}
                 {% if incident.status == 'NEW' or incident.status == 'REOPENED' %}
-                <form action="{% url 'update_status' incident.pk %}" method="post">
-                    {% csrf_token %}
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #94a3b8;">Harakat turi</label>
-                        <select name="action" style="background: #1e293b; color: white; border-color: #334155;">
-                            <option value="ASSIGN">Texnikka biriktirish</option>
-                            <option value="REJECT">Rad etish</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #94a3b8;">Texnikni tanlang</label>
-                        <select name="technician" style="background: #1e293b; color: white; border-color: #334155;">
-                            <option value="">-- Tanlang --</option>
-                            {% for tech in technicians %}
-                                {% if tech.category == incident.category %}
-                                <option value="{{ tech.id }}">{{ tech.username }} ({% if tech.is_busy %}Band{% else %}Bo'sh{% endif %})</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button type="submit" class="btn" style="width: 100%; padding: 0.8rem;">Tasdiqlash</button>
-                </form>
+                    <form action="{% url 'update_status' incident.pk %}" method="post" class="form-stack">
+                        {% csrf_token %}
+                        <div>
+                            <label for="id_action">Harakat turi</label>
+                            <select id="id_action" name="action">
+                                <option value="ASSIGN">Texnikka biriktirish</option>
+                                <option value="REJECT">Rad etish</option>
+                            </select>
+                        </div>
+                        <div id="technician-field">
+                            <label for="id_technician">Texnikni tanlang</label>
+                            <select id="id_technician" name="technician">
+                                <option value="">Tanlang</option>
+                                {% for tech in technicians %}
+                                    {% if tech.category == incident.category %}
+                                        <option value="{{ tech.id }}">{{ tech.username }} ({% if tech.is_busy %}Band{% else %}Bo'sh{% endif %})</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Tasdiqlash</button>
+                    </form>
                 {% else %}
-                    <p style="color: #94a3b8; font-size: 0.9rem;">Hozirda bu ariza bilan amallar bajarib bo'lmaydi.</p>
+                    <div class="empty-state" style="color: rgba(235, 244, 246, 0.78);">Bu ariza hozir operator amali uchun ochiq emas.</div>
                 {% endif %}
             {% elif user.role == 'TECHNICIAN' and incident.technician == user %}
                 {% if incident.status == 'IN_PROGRESS' or incident.status == 'REOPENED' %}
-                <form action="{% url 'update_status' incident.pk %}" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="RESOLVE">
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #94a3b8;">Bajarilgan ish rasmi</label>
-                        <input type="file" name="result_photo" required style="background: #1e293b; color: white; border-color: #334155;">
-                    </div>
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #94a3b8;">Hisobot</label>
-                        <textarea name="result_comment" rows="4" style="background: #1e293b; color: white; border-color: #334155;" placeholder="Nimalar qilindi?"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success" style="width: 100%; padding: 0.8rem;">Hisobotni yuborish</button>
-                </form>
+                    <form action="{% url 'update_status' incident.pk %}" method="post" enctype="multipart/form-data" class="form-stack">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="RESOLVE">
+                        <div>
+                            <label for="id_result_photo">Bajarilgan ish rasmi</label>
+                            <input id="id_result_photo" type="file" name="result_photo" required>
+                        </div>
+                        <div>
+                            <label for="id_result_comment">Hisobot</label>
+                            <textarea id="id_result_comment" name="result_comment" rows="4" placeholder="Nimalar bajarilganini yozing"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success" style="width: 100%;">Hisobotni yuborish</button>
+                    </form>
                 {% else %}
-                    <p style="color: #10b981;">Vazifa yakunlangan. Rahmat!</p>
+                    <div class="empty-state" style="color: rgba(235, 244, 246, 0.78);">Bu vazifa bo'yicha hisobot allaqachon topshirilgan.</div>
                 {% endif %}
             {% elif user.role == 'CITIZEN' and incident.citizen == user and incident.status == 'RESOLVED' %}
-                <form action="{% url 'update_status' incident.pk %}" method="post">
+                <form action="{% url 'update_status' incident.pk %}" method="post" class="form-stack">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="CLOSE">
-                    <div style="background: #1e293b; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #94a3b8; border-left: 3px solid var(--warning);">
-                        <strong>Bajarildi vs Yopildi:</strong> Texnik ishni tugatdi (Bajarildi). Agar natija ma'qul bo'lsa, baho bering va arizani yakuniy yoping (Yopildi).
+                    <div class="chip" style="background: rgba(245, 158, 11, 0.14); color: #fde68a; width: 100%; justify-content: center;">Texnik ishni yakunladi. Endi siz baholab yakuniy holatga o'tkazasiz.</div>
+                    <div>
+                        <label for="id_rating">Baho (1-5)</label>
+                        <input id="id_rating" type="number" name="rating" min="1" max="5" value="5">
                     </div>
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #94a3b8;">Baho (1-5)</label>
-                        <input type="number" name="rating" min="1" max="5" value="5" style="background: #1e293b; color: white; border-color: #334155;">
+                    <div>
+                        <label for="id_comment">Fikr</label>
+                        <textarea id="id_comment" name="comment" rows="3" placeholder="Natija bo'yicha fikringizni yozing"></textarea>
                     </div>
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="color: #94a3b8;">Fikringiz</label>
-                        <textarea name="comment" rows="3" style="background: #1e293b; color: white; border-color: #334155;"></textarea>
-                    </div>
-                    <button type="submit" class="btn" style="width: 100%;">Baholash</button>
+                    <button type="submit" class="btn" style="width: 100%;">Baholash va yopish</button>
                 </form>
             {% else %}
-                <div style="text-align: center; padding: 2rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
-                    <p style="color: #94a3b8;">Tizim tomonidan nazorat qilinmoqda.</p>
-                </div>
+                <div class="empty-state" style="color: rgba(235, 244, 246, 0.78);">Hozircha siz uchun qo'shimcha amal mavjud emas.</div>
             {% endif %}
-        </div>
-    </div>
+        </section>
+    </aside>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const actionSelect = document.getElementById('id_action');
+    const technicianField = document.getElementById('technician-field');
+
+    if (actionSelect && technicianField) {
+        const toggleTechnicianField = () => {
+            technicianField.style.display = actionSelect.value === 'ASSIGN' ? 'block' : 'none';
+        };
+
+        actionSelect.addEventListener('change', toggleTechnicianField);
+        toggleTechnicianField();
+    }
+</script>
 {% endblock %}

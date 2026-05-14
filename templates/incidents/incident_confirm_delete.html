@@ -1,13 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card" style="max-width: 500px; margin: auto; text-align: center;">
-    <h1>Muammoni o'chirishni tasdiqlaysizmi?</h1>
-    <p>"<strong>{{ object.title }}</strong>" o'chirilishiga aminmisiz? Bu amalni ortga qaytarib bo'lmaydi.</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn" style="background-color: #e74c3c;">Ha, o'chirilsin</button>
-        <a href="{% url 'dashboard' %}" class="btn">Bekor qilish</a>
-    </form>
-</div>
+<section class="auth-shell">
+    <div class="card auth-card">
+        <div class="auth-head">
+            <div class="auth-icon" style="color: var(--danger); background: linear-gradient(135deg, rgba(220, 38, 38, 0.12), rgba(245, 158, 11, 0.12));">DL</div>
+            <span class="eyebrow" style="background: rgba(220, 38, 38, 0.08); color: var(--danger);">Tasdiqlash</span>
+            <h1 class="section-title" style="margin-top: 1rem;">Arizani o'chirishni tasdiqlang</h1>
+            <p class="section-copy" style="margin-left: auto; margin-right: auto;">"<strong>{{ incident.title }}</strong>" arizasini o'chirishga ishonchingiz komilmi? Bu amalni keyin ortga qaytarib bo'lmaydi.</p>
+        </div>
+
+        <form method="post" style="display: grid; gap: 0.9rem;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" style="width: 100%;">Ha, o'chirilsin</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline" style="width: 100%;">Bekor qilish</a>
+        </form>
+    </div>
+</section>
 {% endblock %}

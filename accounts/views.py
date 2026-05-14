@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm
@@ -10,6 +11,8 @@ from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.http import JsonResponse
+from .models import Viloyat, Tuman
 
 
 def send_activation_email(request, user):
@@ -72,8 +75,6 @@ def activate_account(request, uidb64, token):
 
     return render(request, 'accounts/account_activation_invalid.html')
 
-from django.contrib import messages
-
 @login_required
 def profile(request):
     if request.method == 'POST':
@@ -89,3 +90,21 @@ def profile(request):
 class MyPasswordChangeView(PasswordChangeView):
     template_name = 'accounts/password_change.html'
     success_url = reverse_lazy('profile')
+
+
+# JSON API Views for Region and District selection
+def get_viloyatlar(request):
+    viloyatlar = list(Viloyat.objects.order_by('name').values('id', 'name'))
+    return JsonResponse({'regions': viloyatlar})
+
+
+def get_tumanlar(request, viloyat_id):
+    if not Viloyat.objects.filter(id=viloyat_id).exists():
+        return JsonResponse({'error': 'Viloyat topilmadi'}, status=404)
+
+    tumanlar = list(
+        Tuman.objects.filter(viloyat_id=viloyat_id)
+        .order_by('name')
+        .values('id', 'name')
+    )
+    return JsonResponse({'districts': tumanlar})
